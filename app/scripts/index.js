@@ -16,12 +16,36 @@ const StarNotary = contract(StarNotaryArtifact)
 // For application bootstrapping, check out window.addEventListener below.
 let accounts
 let account
+let instance;
 
+const start = async () => {
+  // Bootstrap the MetaCoin abstraction for Use.
+  StarNotary.setProvider(web3.currentProvider)
+
+  // Get the initial account balance so it can be displayed.
+  web3.eth.getAccounts(function (err, accs) {
+    if (err != null) {
+      alert('There was an error fetching your accounts.')
+      return
+    }
+
+    if (accs.length === 0) {
+      alert("Couldn't get any accounts! Make sure your Ethereum client is configured correctly.")
+      return
+    }
+
+    accounts = accs
+    account = accounts[0]
+    console.log("accs: ");
+    console.log(accs);
+
+  });
+  instance = await StarNotary.deployed();
+}
 const createStar = async () => {
-  const instance = await StarNotary.deployed();
   const name = document.getElementById("starName").value;
   const id = document.getElementById("starId").value;
-  await instance.createStar(name, id, {from: account});
+  await instance.createStar(name, id, { from: account });
   App.setStatus("New Star Owner is " + account + ".");
 }
 
@@ -31,27 +55,7 @@ const createStar = async () => {
 
 const App = {
   start: function () {
-    const self = this
-
-    // Bootstrap the MetaCoin abstraction for Use.
-    StarNotary.setProvider(web3.currentProvider)
-
-    // Get the initial account balance so it can be displayed.
-    web3.eth.getAccounts(function (err, accs) {
-      if (err != null) {
-        alert('There was an error fetching your accounts.')
-        return
-      }
-
-      if (accs.length === 0) {
-        alert("Couldn't get any accounts! Make sure your Ethereum client is configured correctly.")
-        return
-      }
-
-      accounts = accs
-      account = accounts[0]
-
-    })
+    start();
   },
 
   setStatus: function (message) {
@@ -63,6 +67,12 @@ const App = {
     createStar();
   },
 
+  getStarNameById: async function () {
+    const id = document.getElementById("starId2").value;
+    let starName = await instance.lookUptokenIdToStarInfo(id, { from: account });
+    console.log(starName);
+    document.getElementById('starNameResult').innerHTML = starName;
+  }
 }
 
 window.App = App
