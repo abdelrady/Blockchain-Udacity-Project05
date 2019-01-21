@@ -10,10 +10,10 @@ contract StarNotary is ERC721 {
 
 //  Add a name and a symbol for your starNotary tokens
     string public symbol;
-    string public starName;
+    string public name;
 
 constructor() public {
-    starName = "Rady Star Test";
+    name = "Rady Star Test";
     symbol = "RST";
   }
 
