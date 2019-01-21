@@ -70,7 +70,7 @@ contract('StarNotary', async (accs) => {
 it('Name & Symbol exists', async() => {
     instance = await StarNotary.deployed();
 
-    assert.equal(await instance.starName.call(), "Rady Star Test");
+    assert.equal(await instance.name.call(), "Rady Star Test");
     assert.equal(await instance.symbol.call(), "RST");
   });
 
